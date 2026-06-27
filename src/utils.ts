@@ -16,12 +16,12 @@ import {
 dotenv.config();
 
 /**
- * Retrieves the database ID for the given category.
+ * Retrieves the data source ID for the given category.
  *
  * @param {ItemCategory} category - The category of the item.
  * @returns {string} The corresponding database ID.
  */
-export function getDBID(category: ItemCategory): string {
+export function getDataSourceId(category: ItemCategory): string {
   const databasesMap = {
     [ItemCategory.Movie]: process.env.NOTION_MOVIE_DATABASE_ID,
     [ItemCategory.Music]: process.env.NOTION_MUSIC_DATABASE_ID,
@@ -94,7 +94,7 @@ export function buildPropertyValue(value: any, type: NotionPropTypesEnum, key: s
         } as NotionMultiSelectPropType
         : {
           type: NotionPropTypesEnum.MULTI_SELECT,
-          multi_select: (value || []).map(g => ({ name: g })),
+          multi_select: (value || []).map((g: string) => ({ name: g })),
         } as NotionMultiSelectPropType;
     case NotionPropTypesEnum.RICH_TEXT:
       return {

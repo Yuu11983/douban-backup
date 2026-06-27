@@ -6,6 +6,7 @@ import { sleep } from './utils';
 
 dotenv.config();
 const neodbToken = process.env.NEODB_API_TOKEN;
+const neodbVisibility = Number(process.env.NEODB_VISIBILITY ?? 2);
 
 type NeodbItem = {
   id: string;
@@ -90,7 +91,7 @@ async function insertToNeodb(item: FeedItem): Promise<void> {
           consola.info('Item status changed, going to update: ', `${neodbItem.title}[${item.link}]`);
           await markItem(neodbItem, item);
         }
-      } catch (error) {
+      } catch (error: any) {
         consola.error('Query item\'s mark with error code: ', error.code);
         if (error.code === 'ERR_NON_2XX_3XX_RESPONSE') {
           // 标记不存在，所以创建标记
@@ -103,7 +104,7 @@ async function insertToNeodb(item: FeedItem): Promise<void> {
       await sleep(1500);
       await insertToNeodb(item);
     }
-  } catch (error) {
+  } catch (error: any) {
     consola.error('Fetch item with error: ', error.code);
   }
 }
@@ -125,7 +126,7 @@ async function markItem(neodbItem: NeodbItem, item: FeedItem): Promise<void> {
       },
       json: {
         shelf_type: item.status,
-        visibility: 2,
+        visibility: neodbVisibility,
         comment_text: item.comment || '',
         rating_grade: item.rating ? item.rating * 2 : 0,
         created_time: item.time,
